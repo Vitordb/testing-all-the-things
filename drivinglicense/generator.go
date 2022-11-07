@@ -7,17 +7,25 @@ type Applicant interface {
 	HoldsLicense() bool
 }
 
-type NumberGenerator struct{}
+type Logger interface {
+	LogStuff(v string)
+}
+
+type NumberGenerator struct {
+	l Logger
+}
 
 func (g NumberGenerator) Generate(a Applicant) (string, error) {
 
-	if a.HoldsLicense() == true {
+	if a.HoldsLicense() {
 		return "", errors.New("applicant holds license")
 	}
+
+	g.l.LogStuff("Underaged")
 
 	return "", errors.New("Underaged Applicant")
 }
 
-func NewNumberGenerator() NumberGenerator {
-	return NumberGenerator{}
+func NewNumberGenerator(l Logger) NumberGenerator {
+	return NumberGenerator{l: l}
 }
